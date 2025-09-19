@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
-
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/v1/auth', authRoutes);
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const internshipRoutes = require('./routes/internshipRoutes');
@@ -24,7 +25,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/internships', internshipRoutes);
 app.use('/api/applications', applicationRoutes);
-
 // Root route
 app.get('/', (req, res) => {
   res.send('Student Internship & Placement Portal API');
