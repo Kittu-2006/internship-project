@@ -4,7 +4,6 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/v1/auth', authRoutes);
-const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const internshipRoutes = require('./routes/internshipRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
