@@ -1,3 +1,10 @@
+const router = express.Router();
+
+const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
 // Register
 router.post('/register', async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -5,7 +12,6 @@ router.post('/register', async (req, res) => {
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
-
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already registered' });
@@ -15,19 +21,40 @@ router.post('/register', async (req, res) => {
     const user = new User({ name, email, password: hashedPassword, role });
     await user.save();
 
-    if (!process.env.JWT_SECRET) {
-      console.error("❌ JWT_SECRET is missing in .env file");
-      return res.status(500).json({ message: 'Server configuration error' });
-    }
-
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.status(201).json({
       token,
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
-
   } catch (error) {
-    console.error("❌ Registration error:", error.message);
-    res.status(500).json({ message: error.message || 'Server error registering user' });
+    console.error(error);
+    res.status(500).json({ message: 'Server error registering user' });
   }
 });
+
+// Login
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password required' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: 'Invalid email or password' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid email or password' });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error logging in' });
+  }
+});
+
+module.exports = router;  // ✅ export router
