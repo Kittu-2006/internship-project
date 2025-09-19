@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api/api';
+import api from '../api/api';   // ✅ now it will exist
 import { useAuth } from '../contexts/AuthContext';
 
 export default function RegisterPage() {
@@ -16,8 +16,18 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     try {
-      const res = await api.post('/auth/register', { name, email, password, role });
+      // Call backend register API
+      const res = await api.post('/auth/register', {
+        name,
+        email,
+        password,
+        role
+      });
+
+      // Save token + user in auth context
       login(res.data.token, res.data.user);
+
+      // Redirect after successful registration
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
