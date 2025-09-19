@@ -1,10 +1,16 @@
-// frontend1/src/api/api.js
-import axios from 'axios';
+import axios from "axios";
 
-// Create an axios instance with base URL of backend
-const api = axios.create({
-  baseURL: 'http://localhost:5000/api/v1', // backend URL prefix
-  withCredentials: false
+const API = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1",
 });
 
-export default api;
+// Add JWT to requests
+API.interceptors.request.use((req) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    req.headers.Authorization = `Bearer ${token}`;
+  }
+  return req;
+});
+
+export default API;
