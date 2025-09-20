@@ -1,7 +1,7 @@
 // src/pages/LoginPage.js
 import React, { useState } from "react";
-import api from "../api.js"; // ✅ fixed import
-import { useAuth } from "../context/AuthContext"; // ✅ fixed import
+import api from "../api"; // ✅ fixed import
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
@@ -14,10 +14,9 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const res = await api.post("/auth/login", { email, password });
-      login(res.data.user); // save user in context
+      login(res.data.user);
       localStorage.setItem("token", res.data.token);
 
-      // redirect based on role
       if (res.data.user.role === "student") {
         navigate("/student-dashboard");
       } else if (res.data.user.role === "mentor") {
@@ -25,7 +24,7 @@ const LoginPage = () => {
       } else if (res.data.user.role === "placement_cell") {
         navigate("/placement-dashboard");
       } else {
-        navigate("/"); // fallback
+        navigate("/");
       }
     } catch (err) {
       alert("Login failed. Check credentials.");
