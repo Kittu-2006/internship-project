@@ -1,6 +1,6 @@
 // src/pages/LoginPage.js
 import React, { useState } from "react";
-import api from "../api"; // ✅ fixed import
+import api from "../api/api"; // ✅ fixed import
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
