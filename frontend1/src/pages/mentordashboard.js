@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function MentorDashboard() {
   const { user } = useAuth();
