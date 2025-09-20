@@ -1,50 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import api from '../api/api';
-import { useAuth } from '../context/AuthContext';
+import React from "react";
+import { useAuth } from "../context/AuthContext";
 
-export default function MentorDashboard() {
-  const { user } = useAuth();
-  const [mentees, setMentees] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    async function fetchMentees() {
-      try {
-        setLoading(true);
-        const res = await api.get('/mentor/mentees');
-        setMentees(res.data);
-      } catch (err) {
-        setError('Failed to load mentees');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchMentees();
-  }, []);
+const MentorDashboard = () => {
+  const { user, logout } = useAuth();
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Welcome, {user.name} (Mentor)</h1>
-      {loading && <p>Loading mentees...</p>}
-      {error && <p className="text-red-600">{error}</p>}
-      {!loading && !error && (
-        <div>
-          {mentees.length === 0 ? (
-            <p>No mentees assigned yet.</p>
-          ) : (
-            <ul className="space-y-3">
-              {mentees.map((mentee) => (
-                <li key={mentee._id} className="border p-3 rounded shadow">
-                  <p className="font-semibold">{mentee.name}</p>
-                  <p>Email: {mentee.email}</p>
-                  <p>Course: {mentee.course || 'N/A'}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+      <h1 className="text-2xl font-bold text-purple-600">Mentor Dashboard</h1>
+      <p className="mt-2">Hello, {user?.name || "Mentor"} 👨‍🏫</p>
+
+      <div className="mt-6 space-y-4">
+        <button
+          className="px-4 py-2 bg-yellow-600 text-white rounded"
+          onClick={() => alert("Open approval requests here")}
+        >
+          Approve Applications
+        </button>
+        <button
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+          onClick={() => alert("Show interview calendar")}
+        >
+          View Calendar
+        </button>
+        <button
+          className="px-4 py-2 bg-red-600 text-white rounded"
+          onClick={logout}
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default MentorDashboard;
