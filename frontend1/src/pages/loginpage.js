@@ -1,53 +1,56 @@
-// src/pages/LoginPage.js
 import React, { useState } from "react";
-import api from "../api/api";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { login } = useAuth();
+  const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/auth/login", { email, password });
+      const res = await axios.post("/api/auth/login", form);
       login(res.data.user, res.data.token);
 
-      // redirect based on role
       if (res.data.user.role === "student") navigate("/student");
       else if (res.data.user.role === "mentor") navigate("/mentor");
-      else navigate("/placement");
+      else if (res.data.user.role === "placement") navigate("/placement");
     } catch (err) {
-      alert("Login failed: " + err.response?.data?.message);
+      console.error("Login error:", err.response || err.message);
+      const msg =
+        err.response?.data?.message || err.message || "Unknown server error";
+      alert("Login failed: " + msg);
     }
   };
 
   return (
-    <div className="auth-container">
+    <div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
+          name="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={form.email}
+          onChange={handleChange}
           required
         />
         <input
           type="password"
+          name="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={form.password}
+          onChange={handleChange}
           required
         />
         <button type="submit">Login</button>
       </form>
-      <p>
-        Don’t have an account? <Link to="/register">Register here</Link>
-      </p>
     </div>
   );
 }

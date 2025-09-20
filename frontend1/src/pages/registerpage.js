@@ -1,7 +1,6 @@
-// src/pages/RegisterPage.js
 import React, { useState } from "react";
-import api from "../api/api";
-import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
   const [form, setForm] = useState({
@@ -12,30 +11,50 @@ function RegisterPage() {
   });
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/auth/register", form);
-      alert("Registered successfully! Please log in.");
+      const res = await axios.post("/api/auth/register", form);
+      alert("Registration successful!");
+      localStorage.setItem("token", res.data.token);
       navigate("/");
     } catch (err) {
-      alert("Registration failed: " + err.response?.data?.message);
+      console.error("Register error:", err.response || err.message);
+      const msg =
+        err.response?.data?.message || err.message || "Unknown server error";
+      alert("Registration failed: " + msg);
     }
   };
 
   return (
-    <div className="auth-container">
+    <div>
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <input name="name" placeholder="Name" onChange={handleChange} required />
-        <input name="email" placeholder="Email" onChange={handleChange} required />
         <input
-          name="password"
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+        <input
           type="password"
+          name="password"
           placeholder="Password"
+          value={form.password}
           onChange={handleChange}
           required
         />
@@ -46,9 +65,6 @@ function RegisterPage() {
         </select>
         <button type="submit">Register</button>
       </form>
-      <p>
-        Already have an account? <Link to="/">Login</Link>
-      </p>
     </div>
   );
 }
