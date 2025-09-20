@@ -1,13 +1,13 @@
 // src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./ pages/LoginPage";
-import RegisterPage from "./ pages/RegisterPage";
-import StudentDashboard from "./ pages/StudentDashboard";
-import MentorDashboard from "./ pages/MentorDashboard";
-import PlacementDashboard from "./ pages/PlacementDashboard";
-import ProtectedRoute from "./ components/ProtectedRoute";
-import { AuthProvider } from "./ context/AuthContext";  // ✅ wrap everything in AuthProvider
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import StudentDashboard from "./pages/StudentDashboard";
+import MentorDashboard from "./pages/MentorDashboard";
+import PlacementDashboard from "./pages/PlacementDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";  // ✅ wrap everything in AuthProvider
 
 function App() {
   return (
