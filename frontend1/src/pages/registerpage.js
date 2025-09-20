@@ -1,56 +1,75 @@
-import { useState } from "react";
-import API from "../api";
+// src/pages/RegisterPage.js
+import React, { useState } from "react";
+import api from "../api.js"; // ✅ fixed import
+import { useNavigate } from "react-router-dom";
 
-export default function RegisterPage() {
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "student" });
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+const RegisterPage = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("student");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await API.post("/auth/register", form);
-      alert("Registered successfully! Please login.");
+      await api.post("/auth/register", { name, email, password, role });
+      alert("Registration successful! Please login.");
+      navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Error registering");
+      alert("Error registering. Try again.");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-80">
-        <h2 className="text-xl font-bold mb-4">Register</h2>
-        {error && <p className="text-red-500">{error}</p>}
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded shadow-md w-96"
+      >
+        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         <input
-          name="name"
-          placeholder="Name"
-          className="w-full p-2 mb-2 border rounded"
-          onChange={handleChange}
+          type="text"
+          placeholder="Full Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full p-2 mb-3 border rounded"
+          required
         />
         <input
-          name="email"
-          placeholder="Email"
           type="email"
-          className="w-full p-2 mb-2 border rounded"
-          onChange={handleChange}
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-2 mb-3 border rounded"
+          required
         />
         <input
-          name="password"
-          placeholder="Password"
           type="password"
-          className="w-full p-2 mb-2 border rounded"
-          onChange={handleChange}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 mb-3 border rounded"
+          required
         />
-        <select name="role" className="w-full p-2 mb-2 border rounded" onChange={handleChange}>
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          className="w-full p-2 mb-3 border rounded"
+        >
           <option value="student">Student</option>
           <option value="mentor">Mentor</option>
-          <option value="placement_cell">Admin</option>
+          <option value="placement_cell">Placement Cell</option>
         </select>
-        <button className="bg-blue-600 text-white w-full p-2 rounded">Register</button>
+        <button
+          type="submit"
+          className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+        >
+          Register
+        </button>
       </form>
     </div>
   );
-}
+};
+
+export default RegisterPage;
