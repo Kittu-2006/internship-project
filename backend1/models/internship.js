@@ -1,14 +1,13 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-const InternshipSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: String,
+const internshipSchema = new mongoose.Schema({
+  title: String,
   department: String,
   stipend: Number,
   deadline: Date,
-  conversion: { type: Boolean, default: false },
-  skills: [{ type: String }],
-  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-}, { timestamps: true });
+  conversion: Boolean,
+  skills: [String],
+  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+});
 
-module.exports = mongoose.model('Internship', InternshipSchema);
+export default mongoose.model("Internship", internshipSchema);
