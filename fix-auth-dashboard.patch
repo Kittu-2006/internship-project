@@ -1,0 +1,133 @@
+From 2f8e5fcb2d3a5b6d7e8f901234567890abcdef12 Mon Sep 17 00:00:00 2001
+From: ChatGPT Patch <chatgpt@example.com>
+Date: Sat, 20 Sep 2025 00:00:00 +0530
+Subject: [PATCH] Add missing context, api, pages, and ProtectedRoute; fix
+ imports
+
+---
+ frontend1/src/App.js                      | 14 ++++++++------
+ frontend1/src/api.js                      | 11 +++++++++++
+ frontend1/src/components/ProtectedRoute.js| 13 +++++++++++++
+ frontend1/src/context/AuthContext.js      | 23 +++++++++++++++++++++++
+ frontend1/src/pages/Dashboard.js          | 19 +++++++++++++++++++
+ 5 files changed, 74 insertions(+), 6 deletions(-)
+ create mode 100644 frontend1/src/api.js
+ create mode 100644 frontend1/src/components/ProtectedRoute.js
+ create mode 100644 frontend1/src/context/AuthContext.js
+ create mode 100644 frontend1/src/pages/Dashboard.js
+
+diff --git a/frontend1/src/App.js b/frontend1/src/App.js
+index 1111111..2222222 100644
+--- a/frontend1/src/App.js
++++ b/frontend1/src/App.js
+@@ -1,11 +1,13 @@
+-import React from "react";
+-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+-import LoginPage from "./pages/LoginPage";
+-import RegisterPage from "./pages/RegisterPage";
+-import { AuthProvider } from "./context/AuthContext";
+-import Dashboard from "./pages/Dashboard";
+-import ProtectedRoute from "./components/ProtectedRoute";
++import React from "react";
++import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
++import LoginPage from "./pages/LoginPage";
++import RegisterPage from "./pages/RegisterPage";
++import { AuthProvider } from "./context/AuthContext";
++import Dashboard from "./pages/Dashboard";
++import ProtectedRoute from "./components/ProtectedRoute";
+ 
+ function App() {
+   return (
+diff --git a/frontend1/src/api.js b/frontend1/src/api.js
+new file mode 100644
+index 0000000..3333333
+--- /dev/null
++++ b/frontend1/src/api.js
+@@ -0,0 +1,11 @@
++import axios from "axios";
++
++const api = axios.create({
++  baseURL: "http://localhost:5000/api", // change if backend runs elsewhere
++  headers: {
++    "Content-Type": "application/json",
++  },
++});
++
++export default api;
++
+diff --git a/frontend1/src/components/ProtectedRoute.js b/frontend1/src/components/ProtectedRoute.js
+new file mode 100644
+index 0000000..4444444
+--- /dev/null
++++ b/frontend1/src/components/ProtectedRoute.js
+@@ -0,0 +1,13 @@
++import React from "react";
++import { Navigate } from "react-router-dom";
++import { useAuth } from "../context/AuthContext";
++
++const ProtectedRoute = ({ children }) => {
++  const { user } = useAuth();
++  return user ? children : <Navigate to="/login" replace />;
++};
++
++export default ProtectedRoute;
++
++
++
+diff --git a/frontend1/src/context/AuthContext.js b/frontend1/src/context/AuthContext.js
+new file mode 100644
+index 0000000..5555555
+--- /dev/null
++++ b/frontend1/src/context/AuthContext.js
+@@ -0,0 +1,23 @@
++import React, { createContext, useState, useContext } from "react";
++
++const AuthContext = createContext();
++
++export const AuthProvider = ({ children }) => {
++  const [user, setUser] = useState(null);
++
++  const login = (userData) => {
++    setUser(userData);
++  };
++
++  const logout = () => {
++    setUser(null);
++  };
++
++  return (
++    <AuthContext.Provider value={{ user, login, logout }}>
++      {children}
++    </AuthContext.Provider>
++  );
++};
++
++export const useAuth = () => useContext(AuthContext);
+diff --git a/frontend1/src/pages/Dashboard.js b/frontend1/src/pages/Dashboard.js
+new file mode 100644
+index 0000000..6666666
+--- /dev/null
++++ b/frontend1/src/pages/Dashboard.js
+@@ -0,0 +1,19 @@
++import React from "react";
++import { useAuth } from "../context/AuthContext";
++
++const Dashboard = () => {
++  const { user, logout } = useAuth();
++
++  if (!user) {
++    return <p>Loading...</p>;
++  }
++
++  return (
++    <div>
++      <h1>Dashboard</h1>
++      <p>Welcome, {user.username}</p>
++      <button onClick={logout}>Logout</button>
++    </div>
++  );
++};
++
++export default Dashboard;
+-- 
+2.39.3
